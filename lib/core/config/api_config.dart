@@ -4,6 +4,10 @@ class ApiConfig {
   ApiConfig._();
 
   static const String _defaultLocalApiUrl = 'http://localhost:3000';
+
+  // URL API production — dùng khi deploy web lên Render
+  static const String _productionApiUrl = 'https://fellow4udb.onrender.com';
+
   static const String _envBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: '',
@@ -14,22 +18,21 @@ class ApiConfig {
   );
 
   static String get baseUrl {
+    // 1. Ưu tiên --dart-define nếu có
     if (_envBaseUrl.isNotEmpty) return _envBaseUrl;
-    // Khi deploy web production cùng origin với API thì dùng Uri.base.origin.
-    // Khi chạy local (flutter run -d chrome), web app chạy ở port khác với
-    // API server (localhost:3000), nên luôn dùng _defaultLocalApiUrl.
-    if (kIsWeb && !_isLocalOrigin) return Uri.base.origin;
-    return _defaultLocalApiUrl;
+    // 2. Khi chạy local dev (localhost) → dùng localhost:3000
+    if (_isLocalOrigin) return _defaultLocalApiUrl;
+    // 3. Khi deploy production web → dùng URL API production cố định
+    return _productionApiUrl;
   }
 
   static String get authBaseUrl {
     if (_envAuthBaseUrl.isNotEmpty) return _envAuthBaseUrl;
-    if (kIsWeb && !_isLocalOrigin) return Uri.base.origin;
-    return _defaultLocalApiUrl;
+    if (_isLocalOrigin) return _defaultLocalApiUrl;
+    return _productionApiUrl;
   }
 
-  /// Trả về true nếu web app đang chạy trên localhost / 127.0.0.1
-  /// (tức là môi trường dev, không phải production).
+  /// true khi chạy trên localhost (dev mode)
   static bool get _isLocalOrigin {
     if (!kIsWeb) return false;
     final host = Uri.base.host;
