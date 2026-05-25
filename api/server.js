@@ -449,8 +449,12 @@ async function handleRequest(req, res) {
 
   // Swagger
   if (req.method === "GET" && pathname === "/api/docs") {
-    const protocol = req.headers["x-forwarded-proto"] || "https";
-    sendHtml(res, 200, buildSwaggerUiHtml(`${protocol}://${req.headers.host}`));
+    const forwardedProto = req.headers["x-forwarded-proto"];
+    const host = req.headers.host || `localhost:${port}`;
+    // Khi chạy local không có x-forwarded-proto → dùng http
+    // Khi deploy Render có x-forwarded-proto: https → dùng https
+    const protocol = forwardedProto ? forwardedProto.split(",")[0].trim() : "http";
+    sendHtml(res, 200, buildSwaggerUiHtml(`${protocol}://${host}`));
     return;
   }
   if (req.method === "GET" && pathname === "/api/docs/swagger.json") {
