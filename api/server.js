@@ -523,9 +523,16 @@ async function handleRequest(req, res) {
     if (req.method === "GET" && nRoute.id !== null) { await handleNotificationDetail(res, nRoute.id); return; }
   }
 
-  // Root
-  if (req.method === "GET" && pathname === "/") {
-    return sendJson(res, 200, { message: "Fellow4U API running", swagger: "/api/docs", health: "/api/meta/health" });
+  // Root + HEAD (UptimeRobot health check)
+  if (pathname === "/") {
+    if (req.method === "HEAD") {
+      res.writeHead(200);
+      res.end();
+      return;
+    }
+    if (req.method === "GET") {
+      return sendJson(res, 200, { message: "Fellow4U API running", swagger: "/api/docs", health: "/api/meta/health" });
+    }
   }
 
   sendJson(res, 404, { message: "Route not found", path: pathname });
