@@ -421,13 +421,28 @@ async function handleRequest(req, res) {
   // ─────────────────────────────────────
 
   if (
-    req.method === "GET" &&
     pathname === "/api/meta/health"
   ) {
 
-    await handleHealthCheck(res);
+    // UptimeRobot dùng HEAD
+    if (req.method === "HEAD") {
 
-    return;
+      res.writeHead(200);
+
+      res.end();
+
+      return;
+
+    }
+
+    // Browser/API dùng GET
+    if (req.method === "GET") {
+
+      await handleHealthCheck(res);
+
+      return;
+
+    }
 
   }
 
