@@ -555,29 +555,32 @@ async function handleRequest(req, res) {
     await handleUserDetail(res, userRoute.id); return;
   }
 
-  // TopJourneys — GET public, write cần auth
+  // TopJourneys — tất cả đều cần auth
   const jRoute = parseEntityPath(pathname, "/api/TopJourneys");
   if (jRoute.matches) {
+    if (!requireAuth(req, res)) return;
     if (jRoute.id !== null && Number.isNaN(jRoute.id)) { sendJson(res, 400, { message: "Invalid journey id" }); return; }
     if (req.method === "GET"    && jRoute.id === null)  { await handleListJourneys(res, urlObj); return; }
     if (req.method === "GET"    && jRoute.id !== null)  { await handleJourneyDetail(res, jRoute.id); return; }
-    if (req.method === "POST"   && jRoute.id === null)  { if (!requireAuth(req, res)) return; await handleCreateJourney(req, res); return; }
-    if (req.method === "PUT"    && jRoute.id !== null)  { if (!requireAuth(req, res)) return; await handleUpdateJourney(req, res, jRoute.id, false); return; }
-    if (req.method === "PATCH"  && jRoute.id !== null)  { if (!requireAuth(req, res)) return; await handleUpdateJourney(req, res, jRoute.id, true); return; }
-    if (req.method === "DELETE" && jRoute.id !== null)  { if (!requireAuth(req, res)) return; await handleDeleteJourney(res, jRoute.id); return; }
+    if (req.method === "POST"   && jRoute.id === null)  { await handleCreateJourney(req, res); return; }
+    if (req.method === "PUT"    && jRoute.id !== null)  { await handleUpdateJourney(req, res, jRoute.id, false); return; }
+    if (req.method === "PATCH"  && jRoute.id !== null)  { await handleUpdateJourney(req, res, jRoute.id, true); return; }
+    if (req.method === "DELETE" && jRoute.id !== null)  { await handleDeleteJourney(res, jRoute.id); return; }
   }
 
-  // BestGuides
+  // BestGuides — cần auth
   const gRoute = parseEntityPath(pathname, "/api/BestGuides");
   if (gRoute.matches) {
+    if (!requireAuth(req, res)) return;
     if (gRoute.id !== null && Number.isNaN(gRoute.id)) { sendJson(res, 400, { message: "Invalid guide id" }); return; }
     if (req.method === "GET" && gRoute.id === null) { await handleListGuides(res, urlObj); return; }
     if (req.method === "GET" && gRoute.id !== null) { await handleGuideDetail(res, gRoute.id); return; }
   }
 
-  // TopExperiences
+  // TopExperiences — cần auth
   const eRoute = parseEntityPath(pathname, "/api/TopExperiences");
   if (eRoute.matches) {
+    if (!requireAuth(req, res)) return;
     if (eRoute.id !== null && Number.isNaN(eRoute.id)) { sendJson(res, 400, { message: "Invalid experience id" }); return; }
     if (req.method === "GET" && eRoute.id === null) { await handleListExperiences(res, urlObj); return; }
     if (req.method === "GET" && eRoute.id !== null) { await handleExperienceDetail(res, eRoute.id); return; }
