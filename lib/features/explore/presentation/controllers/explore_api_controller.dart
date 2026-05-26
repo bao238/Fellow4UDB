@@ -1,3 +1,4 @@
+import '../../../../core/auth/auth_session.dart';
 import '../../../../core/config/api_config.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_endpoints.dart';
@@ -78,6 +79,8 @@ class ExploreApiController {
     : _apiClient = ApiClient(
         baseUrl: ApiConfig.baseUrl,
         timeout: const Duration(milliseconds: ApiConfig.timeoutMs),
+        // Truyền token từ AuthSession để gửi Bearer header tự động
+        bearerToken: AuthSession.accessToken,
         enableLogging: true,
       );
 

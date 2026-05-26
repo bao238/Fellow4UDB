@@ -1,3 +1,4 @@
+import '../../../../core/auth/auth_session.dart';
 import '../../../../core/config/api_config.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_endpoints.dart';
@@ -30,6 +31,7 @@ class NotificationsApiController {
     : _apiClient = ApiClient(
         baseUrl: ApiConfig.baseUrl,
         timeout: const Duration(milliseconds: ApiConfig.timeoutMs),
+        bearerToken: AuthSession.accessToken,
         enableLogging: true,
       );
 

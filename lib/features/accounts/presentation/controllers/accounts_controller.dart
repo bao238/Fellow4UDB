@@ -1,3 +1,4 @@
+import '../../../../core/auth/auth_session.dart';
 import '../../../../core/config/api_config.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_result.dart';
@@ -11,6 +12,7 @@ class AccountsController {
     _apiClient = ApiClient(
       baseUrl: ApiConfig.authBaseUrl,
       timeout: const Duration(milliseconds: ApiConfig.timeoutMs),
+      bearerToken: AuthSession.accessToken,
       enableLogging: true,
     );
     _repository = AccountsRepositoryImpl(AccountsApiService(_apiClient));
